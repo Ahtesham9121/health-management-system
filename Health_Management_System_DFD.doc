@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Health Management System - Documentation</title>
+    <style>
+        body { font-family: 'Calibri', 'Arial', sans-serif; line-height: 1.6; margin: 40px; }
+        h1 { color: #2E5894; border-bottom: 2px solid #2E5894; }
+        h2 { color: #3B7FB9; margin-top: 30px; }
+        h3 { color: #4A90E2; margin-top: 20px; }
+        .mermaid { background: #f4f4f4; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; white-space: pre; border: 1px solid #ddd; margin: 20px 0; }
+        .note { font-style: italic; color: #666; font-size: 0.9em; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        ul, ol { margin-bottom: 20px; }
+        li { margin-bottom: 5px; }
+        .folder-list { list-style-type: none; padding-left: 20px; }
+        .folder-list li::before { content: "📁 "; }
+        .file-list li::before { content: "📄 "; }
+    </style>
+</head>
+<body>
+    <h1>Health Management System - Documentation</h1>
+    <p>This document provides a visual representation of how data flows through the Health Management System and its architectural organization.</p>
+
+    <hr>
+
+    <h2>1. Data Flow Diagrams (DFD)</h2>
+
+    <h3>Level 0 DFD: Context Diagram</h3>
+    <p>The Context Diagram shows the entire system as a single process and its interaction with external entities.</p>
+    <div class="mermaid">
+graph LR
+    P[Patient]
+    A[Admin]
+    S((Health Management System))
+    
+    P -- "Registration/Login Info" --> S
+    P -- "Search Criteria (Location, Speciality)" --> S
+    P -- "Appointment Requests" --> S
+    S -- "Appointment Confirmations" --> P
+    S -- "Doctor/Hospital Lists" --> P
+    
+    A -- "Auth Credentials" --> S
+    A -- "Hospital/Doctor Management Data" --> S
+    A -- "System Config (States/Cities)" --> S
+    S -- "Dashboard Stats / Reports" --> A
+    </div>
+    <p class="note">Note: Copy the code above into <a href="https://mermaid.live">Mermaid Live Editor</a> to render the diagram visually.</p>
+
+    <h3>Level 1 DFD: Process Overview</h3>
+    <p>The Level 1 DFD breaks down the system into its major functional processes and shows data stores.</p>
+    <div class="mermaid">
+graph TD
+    %% Entities
+    Patient[Patient]
+    Admin[Admin]
+
+    %% Processes
+    P1((1.0 Authentication))
+    P2((2.0 Discovery Service))
+    P3((3.0 Appointment Booking))
+    P4((4.0 Admin Management))
+
+    %% Data Stores
+    D1[(Users DB)]
+    D2[(Healthcare DB)]
+    D3[(Appointments DB)]
+
+    %% Connections
+    Patient -- "Login/Register" --> P1
+    P1 <&ndash;&gt; D1
+    
+    Patient -- "Search for Doctors/Hospitals" --> P2
+    P2 -- "Fetch Entities" --> D2
+    
+    Patient -- "Book Appointment" --> P3
+    P3 -- "Store Appointment" --> D3
+    P3 -- "Fetch Dr/Patient Info" --> D2
+    
+    Admin -- "Manage Doctors/Hospitals" --> P4
+    P4 <&ndash;&gt; D2
+    Admin -- "User Management" --> P4
+    P4 <&ndash;&gt; D1
+    
+    P3 -- "Confirm Booking" --> Patient
+    P2 -- "Search Results" --> Patient
+    </div>
+
+    <hr>
+
+    <h2>2. Health Management System Key Components</h2>
+    <h3>External Entities</h3>
+    <ul>
+        <li><strong>Patient</strong>: End-user looking to discover healthcare providers and book appointments.</li>
+        <li><strong>Admin</strong>: Internal user responsible for system maintenance and metadata management.</li>
+    </ul>
+
+    <h3>Data Stores</h3>
+    <table>
+        <tr>
+            <th>Data Store</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>Users DB</td>
+            <td>Stores user profiles, passwords (hashed), and roles.</td>
+        </tr>
+        <tr>
+            <td>Healthcare DB</td>
+            <td>Stores Hospitals, Doctors, Specialities, Cities, and States.</td>
+        </tr>
+        <tr>
+            <td>Appointments DB</td>
+            <td>Stores booking history and status.</td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <h2>3. Application Folder Structure</h2>
+
+    <h3>Root Directory</h3>
+    <ul>
+        <li><strong>backend/</strong>: Spring Boot Java application</li>
+        <li><strong>frontend/</strong>: React + Vite + TypeScript application</li>
+        <li><strong>start_app.bat</strong>: Script to launch both services</li>
+    </ul>
+
+    <h3>Backend Organization (Spring Boot)</h3>
+    <ul>
+        <li><strong>src/main/java/com/healthcare/</strong>
+            <ul>
+                <li><strong>config/</strong>: Security (JWT) and Data Seeder configurations</li>
+                <li><strong>controller/</strong>: REST API Endpoints</li>
+                <li><strong>dto/</strong>: Data Transfer Objects for API requests/responses</li>
+                <li><strong>entity/</strong>: JPA Entities (Database Tables)</li>
+                <li><strong>repository/</strong>: Spring Data JPA (Database queries)</li>
+                <li><strong>service/</strong>: Business Logic and implementation</li>
+            </ul>
+        </li>
+        <li><strong>src/main/resources/</strong>: application.properties (Configuration)</li>
+    </ul>
+
+    <h3>Frontend Organization (React + Vite)</h3>
+    <ul>
+        <li><strong>src/</strong>
+            <ul>
+                <li><strong>components/</strong>: Reusable UI blocks (Navbars, Cards, Buttons)</li>
+                <li><strong>pages/</strong>: Full page components (Landing Page, Admin Panels)</li>
+                <li><strong>context/</strong>: Auth state management</li>
+                <li><strong>services/</strong>: API communication (Axios hooks)</li>
+            </ul>
+        </li>
+        <li><strong>vite.config.ts</strong>: Build and proxy settings</li>
+    </ul>
+
+</body>
+</html>

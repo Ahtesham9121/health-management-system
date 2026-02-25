@@ -1,0 +1,3 @@
+@echo off
+echo Starting Frontend in new window...
+start "HMS Frontend" cmd /k "cd frontend && npm run dev"
