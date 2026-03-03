@@ -1,3 +1,0 @@
-@echo off
-echo Starting Backend in new window...
-start "HMS Backend" cmd /k "cd backend && mvn spring-boot:run"
